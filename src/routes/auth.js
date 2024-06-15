@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { login, signup } from '../services/users.js';
-import { generateToken } from '../utils/jwt.js';
+import { login, signup, validateUser } from '../services/users.js';
+import { decodeToken } from '../utils/jwt.js';
 
 const router = Router();
 
@@ -19,12 +19,19 @@ router.post('/login', async (req, res) => {
     passwordStr: req.body.password,
   });
 
+  return res.json(response);
+});
+
+router.get('/me', async (req, res) => {
+  const authToken = decodeToken(req.headers.authtoken);
+  const [email, name] = authToken.split('-');
+  const response = await validateUser(email, name);
+
   if (response.error) {
-    return res.json(response);
-  } else {
-    const token = generateToken(response);
-    return res.json({ ...response, token });
+    return res.status(401).json(response);
   }
+
+  return res.json(response);
 });
 
 export default router;

@@ -1,5 +1,6 @@
 import { compare, hash } from '../utils/password.js';
 import { User } from '../models/user.schema.js';
+import { generateToken } from '../utils/jwt.js';
 
 export const signup = async ({ email, passwordStr, name }) => {
   const { password, salt } = await hash(passwordStr);
@@ -7,9 +8,8 @@ export const signup = async ({ email, passwordStr, name }) => {
   try {
     const user = await User.create({ email, password, name });
     return {
+      success: true,
       id: user._id,
-      email: user.email,
-      name: user.name,
     };
   } catch (err) {
     console.error(err);
@@ -34,10 +34,29 @@ export const login = async ({ email, passwordStr }) => {
       error: 'Wrong password',
     };
   } else {
+    const token = generateToken(user);
     return {
+      success: true,
       id: user._id,
-      email: user.email,
-      name: user.name,
+      token,
+    };
+  }
+};
+
+export const validateUser = async (email, name) => {
+  const error = 'User not found';
+  try {
+    const user = await User.findOne({ email, name });
+    if (!user) {
+      return {
+        error,
+      };
+    }
+    return user;
+  } catch (err) {
+    console.error(err);
+    return {
+      error,
     };
   }
 };

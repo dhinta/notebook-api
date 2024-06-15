@@ -5,6 +5,7 @@ import authRouter from './routes/auth.js';
 import noteRouter from './routes/note.js';
 import db from './config/db.js';
 import 'dotenv/config';
+import { verifyUser } from './middleware/verify-user.js';
 
 const app = express();
 app.use(cors());
@@ -13,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
 app.use('/auth', authRouter);
-app.use('/notes', noteRouter);
+app.use('/notes', verifyUser, noteRouter);
 
 app.route('/').get((req, res) => {
   res.status(404).end();
