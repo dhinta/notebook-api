@@ -1,26 +1,27 @@
-import express from "express";
-import cors from "cors";
-import bodyParser from "body-parser";
-import mongoose from "mongoose";
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import authRouter from './routes/auth.js';
+import noteRouter from './routes/note.js';
+import db from './config/db.js';
+import 'dotenv/config';
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.route("/").get((req, res) => {
-    res.send("Hello World!");
-})
+// Routes
+app.use('/auth', authRouter);
+app.use('/notes', noteRouter);
 
-// mongoose.connect("mongodb://localhost:27017/notebook-api", {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-// });
+app.route('/').get((req, res) => {
+  res.status(404).end();
+});
 
-// const db = mongoose.connection;
-// db.on("error", console.error.bind(console, "connection error:"));
-// db.once("open", function () {
-//     console.log("Connected successfully");
-// }); 
+app.listen(process.env.PORT, () => {
+  console.log(`Server started on port ${process.env.PORT}`);
 
-app.listen(3000, () => console.log("Server started on port 3000"));
+  db.on('error', console.error.bind(console, 'connection error:'));
+  db.once('open', () => console.log('Connected successfully'));
+});
