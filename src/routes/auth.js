@@ -23,7 +23,7 @@ router.post('/login', async (req, res) => {
 });
 
 router.get('/me', async (req, res) => {
-  const authToken = decodeToken(req.headers.authtoken);
+  const authToken = decodeToken(req.headers.authorization);
   const [email, name] = authToken.split('-');
   const response = await validateUser(email, name);
 

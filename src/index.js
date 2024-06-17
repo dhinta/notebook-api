@@ -8,7 +8,12 @@ import 'dotenv/config';
 import { verifyUser } from './middleware/verify-user.js';
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: 'http://localhost',
+    allowedHeaders: ['Authorization', 'Content-Type'],
+  }),
+);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

@@ -3,7 +3,7 @@ import { decodeToken } from '../utils/jwt.js';
 
 export async function verifyUser(req, res, next) {
   const error = { error: 'Unauthorized' };
-  const authToken = req.headers.authtoken;
+  const authToken = req.headers.authorization;
   if (!authToken) {
     return res.status(401).json(error);
   }
