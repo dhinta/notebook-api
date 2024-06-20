@@ -4,7 +4,6 @@ import { generateToken } from '../utils/jwt.js';
 
 export const signup = async ({ email, passwordStr, name }) => {
   const { password, salt } = await hash(passwordStr);
-  console.log('Password', password, salt);
   try {
     const user = await User.create({ email, password, name });
     return {
@@ -31,7 +30,7 @@ export const login = async ({ email, passwordStr }) => {
   const isMatch = await compare(passwordStr, password);
   if (!isMatch) {
     return {
-      error: 'Wrong password',
+      error: 'Wrong email or password!',
     };
   } else {
     const token = generateToken(user);

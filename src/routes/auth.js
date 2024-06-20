@@ -23,15 +23,26 @@ router.post('/login', async (req, res) => {
 });
 
 router.get('/me', async (req, res) => {
-  const authToken = decodeToken(req.headers.authorization);
-  const [email, name] = authToken.split('-');
-  const response = await validateUser(email, name);
+  try {
+    const authToken = decodeToken(req.headers.authorization);
+    const [email, name] = authToken.split('-');
+    const response = await validateUser(email, name);
 
-  if (response.error) {
-    return res.status(401).json(response);
+    if (response.error) {
+      return res.status(401).json(response);
+    }
+
+    return res.json({
+      id: response._id,
+      name: response.name,
+      email: response.email,
+      type: response.type,
+      createdAt: response.createdAt,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(401).json({ error: 'Unauthorized' });
   }
-
-  return res.json(response);
 });
 
 export default router;
