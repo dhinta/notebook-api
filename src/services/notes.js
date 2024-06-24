@@ -3,9 +3,9 @@ import { generateShortAlphaNumericId } from '../utils/common.js';
 import { NOTE_STATUS } from '../models/note.schema.js';
 
 // List
-export const list = async () => {
+export const list = async (query) => {
   try {
-    const note = await Note.find({});
+    const note = await Note.find({ ...query });
     return note;
   } catch (err) {
     console.error(err);
@@ -16,10 +16,10 @@ export const list = async () => {
 };
 
 // Create
-export const create = async ({ title, note, tags }) => {
+export const create = async ({ title, note, tags, createdBy }) => {
   try {
     const url = generateShortAlphaNumericId();
-    const data = await Note.create({ title, note, tags, url });
+    const data = await Note.create({ title, note, tags, url, createdBy });
     return {
       id: data._id,
     };

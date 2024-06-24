@@ -16,6 +16,7 @@ export async function verifyUser(req, res, next) {
     if (data.error) {
       return res.status(401).json(error);
     }
+    res.locals.user = data;
     next();
   } catch (err) {
     return res.status(401).json(error);

@@ -19,25 +19,33 @@ export const signup = async ({ email, passwordStr, name }) => {
 };
 
 export const login = async ({ email, passwordStr }) => {
-  const user = await User.findOne({ email });
-  if (!user) {
-    return {
-      error: 'User not found',
-    };
-  }
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return {
+        code: 401,
+        error: 'User not found',
+      };
+    }
 
-  const { password } = user;
-  const isMatch = await compare(passwordStr, password);
-  if (!isMatch) {
+    const { password } = user;
+    const isMatch = await compare(passwordStr, password);
+    if (!isMatch) {
+      return {
+        error: 'Wrong email or password!',
+      };
+    } else {
+      const token = generateToken(user);
+      return {
+        success: true,
+        id: user._id,
+        token,
+      };
+    }
+  } catch (error) {
     return {
-      error: 'Wrong email or password!',
-    };
-  } else {
-    const token = generateToken(user);
-    return {
-      success: true,
-      id: user._id,
-      token,
+      code: 500,
+      error: 'Error processing data, please try again',
     };
   }
 };

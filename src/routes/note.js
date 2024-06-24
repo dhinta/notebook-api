@@ -13,7 +13,9 @@ const router = Router();
 // List
 router.get('/', async (req, res) => {
   try {
-    const response = await list();
+    const response = await list({
+      createdBy: res.locals.user._id,
+    });
     res.json(response);
   } catch (error) {
     res.json({ error });
@@ -23,7 +25,15 @@ router.get('/', async (req, res) => {
 // Create
 router.post('/', async (req, res) => {
   const { title, note, tags = [] } = req.body;
-  const response = await create({ title, note, tags });
+  const response = await create({
+    title,
+    note,
+    tags,
+    createdBy: res.locals.user._id,
+  });
+  if (response.error) {
+    return res.status(500).json({ error: response.error });
+  }
   res.json(response);
 });
 

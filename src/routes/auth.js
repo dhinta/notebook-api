@@ -19,6 +19,10 @@ router.post('/login', async (req, res) => {
     passwordStr: req.body.password,
   });
 
+  if (response.error) {
+    return res.status(response.code).json(response);
+  }
+
   return res.json(response);
 });
 
