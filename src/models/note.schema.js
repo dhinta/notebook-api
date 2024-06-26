@@ -19,6 +19,7 @@ export const noteSchema = new Schema({
   theme: { type: String, default: NOTE_THEME.DEFAULT },
   status: { type: String, default: NOTE_STATUS.ACTIVE },
   files: { type: [String] },
+  createdAt: { type: Date, default: Date.now },
 });
 
 export const Note = mongoose.model('Note', noteSchema);

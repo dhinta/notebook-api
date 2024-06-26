@@ -13,9 +13,15 @@ const router = Router();
 // List
 router.get('/', async (req, res) => {
   try {
-    const response = await list({
-      createdBy: res.locals.user._id,
-    });
+    const queryParams = req.query;
+    const hasParams = Object.keys(queryParams).length;
+    const query = hasParams
+      ? {
+          createdBy: res.locals.user._id,
+          ...queryParams,
+        }
+      : { createdBy: res.locals.user._id };
+    const response = await list(query);
     res.json(response);
   } catch (error) {
     res.json({ error });
@@ -48,6 +54,9 @@ router.put('/', async (req, res) => {
 router.delete('/', async (req, res) => {
   const { id } = req.body;
   const response = await deleteNote({ id });
+  if (response.error) {
+    return res.status(500).json({ error: response.error });
+  }
   res.json(response);
 });
 

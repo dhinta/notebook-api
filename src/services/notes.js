@@ -5,7 +5,9 @@ import { NOTE_STATUS } from '../models/note.schema.js';
 // List
 export const list = async (query) => {
   try {
-    const note = await Note.find({ ...query });
+    const note = await Note.find({ ...query, status: NOTE_STATUS.ACTIVE }).sort(
+      { createdAt: 'desc' },
+    );
     return note;
   } catch (err) {
     console.error(err);
@@ -34,7 +36,7 @@ export const create = async ({ title, note, tags, createdBy }) => {
 // Update
 export const update = async ({ id, ...data }) => {
   try {
-    const response = await Note.findByIdAndUpdate({ _id: id }, data);
+    const response = await Note.findByIdAndUpdate(id, data);
     return {
       ...response.toJSON(),
     };
@@ -49,16 +51,13 @@ export const update = async ({ id, ...data }) => {
 // Delete
 export const deleteNote = async ({ id }) => {
   try {
-    const data = await Note.updateOne(
-      { _id: id },
-      { $set: { status: NOTE_STATUS.DELETED } },
-    );
+    const data = await Note.findByIdAndUpdate(id, {
+      status: NOTE_STATUS.DELETED,
+    });
 
     const response = {
       success: !!data.modifiedCount,
-      message: data.modifiedCount
-        ? 'Note deleted successfully'
-        : 'Error processing data, please try again',
+      message: 'Note deleted successfully',
     };
 
     return response;
